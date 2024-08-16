@@ -47,16 +47,16 @@ app.get("/getAllFiles", (request, response) => {
         console.log(`Contents of ${file}:`, fileContent);
         data.push({
           name: file,
-          date: new Date(fileContent),
+          content: new Date(fileContent),
         });
       } catch (err) {
         console.error(`Error reading ${file}:`, err);
       }
     });
     // Sorting the array based on the 'date' property
-    data.sort((a, b) => a.date - b.date);
+    data.sort((a, b) => a.content - b.content);
     console.log(data);
-    response.send(data);
+    response.json(data);
   });
 });
 
