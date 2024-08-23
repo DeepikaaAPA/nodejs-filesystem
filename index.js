@@ -61,5 +61,5 @@ app.get("/createFile", createFile);
 app.get("/getAllFiles", getAllFiles);
 // start the server and listen on port 3000
 app.listen(3000, () => {
-  console.log(`Server running on port 3000 at http://127.0.0.1:3000`);
+  console.log(`Server running on port 3000`);
 });
