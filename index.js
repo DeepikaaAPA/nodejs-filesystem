@@ -1,13 +1,34 @@
 // import the express module
 const express = require("express");
-const fs = require("fs");
+const fs = require("fs/promises");
 // create an express application
 const app = express();
 const path = require("path");
-const getAllFiles = (request, response) => {
-  response.sendFile(path.join(__dirname, "/files/8-18-2024, 12-03-26 AM.txt"));
+
+const getAllFiles = async (request, response) => {
+  let results = [];
+  /*read the list of files in the folder async */
+  try {
+    const files = await fs.readdir(path.join(__dirname, "/files"));
+    for (const file of files) {
+      const content = await fs.readFile(
+        path.join(__dirname, `/files/${file}`),
+        { encoding: "utf8" }
+      );
+      results.push({ file, content: new Date(content) });
+    }
+    //  console.log(results);
+    results.sort((a, b) => a.content - b.content);
+    response.send({
+      message: " file content: timestamp in ISO string",
+      results,
+    });
+  } catch (err) {
+    console.log(err);
+    response.send(err.message);
+  }
 };
-const createFile = (request, response) => {
+const createFile = async (request, response) => {
   //  logic goes here to get the current timestamp and format it
   // and make it as a file name and to be written in the file
   let current_date = new Date();
@@ -17,11 +38,20 @@ const createFile = (request, response) => {
     .replaceAll(":", "-");
 
   // create a file in a folder called as files
-  fs.writeFile(`files/${file_name}.txt`, current_date.toISOString(), () => {
+  try {
+    /*
+    file name:  current date - time in locale format
+    file content: current timestamp in ISO string
+    */
+    await fs.writeFile(`files/${file_name}.txt`, current_date.toISOString());
     response.send(`${file_name}.txt created successfully`);
     console.log(`files/${file_name}.txt created successfully`);
-  });
+  } catch (err) {
+    console.log(err);
+    response.send("Error creating file");
+  }
 };
+// use the express middleware for enabling access to the files
 app.use(express.static("files"));
 // use the express middleware for parsing json data
 app.use(express.json());
