@@ -29,6 +29,13 @@ const getAllFiles = async (request, response) => {
   }
 };
 const createFile = async (request, response) => {
+  const directoryPath = "./files";
+
+  // Use fs.promises.mkdir() to create the directory asynchronously
+  fs.mkdir(directoryPath)
+    .then(() => console.log(`Directory '${directoryPath}' created.`))
+    .catch((err) => console.error(` ${err.message}`));
+
   //  logic goes here to get the current timestamp and format it
   // and make it as a file name and to be written in the file
   let current_date = new Date();
